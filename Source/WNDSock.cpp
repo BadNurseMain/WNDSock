@@ -53,10 +53,10 @@ unsigned char WNDSock::Host(unsigned int Backlog)
 
 unsigned char WNDSock::Listen(unsigned int Backlog, unsigned char Count)
 {
+	if (listen(Conn, Backlog) == SOCKET_ERROR) return 1;
+
 	for (unsigned char x = 0; x < Count; x++)
 	{
-		if (listen(Conn, Backlog) == SOCKET_ERROR) return 1;
-
 		if (!ExSocketCount) ExSocket = (SOCKET*)malloc(sizeof(SOCKET));
 		else
 		{
@@ -71,6 +71,7 @@ unsigned char WNDSock::Listen(unsigned int Backlog, unsigned char Count)
 		
 		++ExSocketCount;
 	}
+
 	return 0;
 }
 
@@ -93,12 +94,12 @@ unsigned char WNDSock::Join(const char* Address, unsigned short Port)
 	ExSocket = (SOCKET*)malloc(sizeof(SOCKET));
 	if (!ExSocket) return 1;
 
-	if(connect(*ExSocket, (const sockaddr*)&HostAddr, sizeof(HostAddr))) return 2;
-	
+	*ExSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+	while (connect(*ExSocket, (const sockaddr*)&HostAddr, sizeof(HostAddr)));
+
 	ExSocketCount = 1;
 	return 0;
 }
-
 
 unsigned char WNDSock::Send(char* Buffer, unsigned int BufferSize)
 {
