@@ -1,3 +1,3 @@
-# WNDSock
-Cross platform socket library \n
-Men are tasty mmmm yes men
+<h1> WNDSock </h1>
+<p> WNDSock is very epical 😎 </p>
+<p> Currently supports Windows and eventually Linux uwu </p>
