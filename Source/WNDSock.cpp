@@ -41,11 +41,7 @@ unsigned char WNDSock::Host(const char* Address, unsigned short Port, unsigned i
 	if(CurrentType) closesocket(Conn);
 
 	//Setting up Socket to receive connections.
-	if (bind(Conn, (const sockaddr*)&Addr, sizeof(Addr)))
-	{
-		printf("Error occured creating socket. \nError code: %d", WSAGetLastError());
-		return 1;
-	}
+	if (bind(Conn, (const sockaddr*)&Addr, sizeof(Addr))) return 1;
 
 	CurrentType = SOCK_HOST;
 	ExSocketCount = 0;
@@ -104,46 +100,23 @@ unsigned char WNDSock::Join(const char* Address, unsigned short Port)
 
 unsigned char WNDSock::Send(char* Buffer, unsigned int BufferSize)
 {
-	if (send(*ExSocket, (char*)&BufferSize, sizeof(int), 0) == SOCKET_ERROR)
-	{
-		printf("Error has occurred sending buffer size. \nError code: %d", WSAGetLastError());
-		return 1;
-	}
-	
-	if (send(*ExSocket, Buffer, BufferSize, 0) != BufferSize)
-	{
-		printf("Error has occurred sending buffer. \nError code: %d", WSAGetLastError());
-		return 2;
-	}
-	
+	if (send(*ExSocket, (char*)&BufferSize, sizeof(int), 0) == SOCKET_ERROR) return 1;
+	if (send(*ExSocket, Buffer, BufferSize, 0) != BufferSize) return 2;
 	return 0;
 }
 
 unsigned char WNDSock::Send(char* Buffer, unsigned int BufferSize, unsigned char Index)
 {
 	if (ExSocketCount - 1 < Index) return 1;
-	if (send(ExSocket[Index], (char*)&BufferSize, sizeof(int), 0) == SOCKET_ERROR)
-	{
-		printf("Error has occurred sending buffer size. \nError code: %d", WSAGetLastError());
-		return 2;
-	}
-
-	if (send(ExSocket[Index], Buffer, BufferSize, 0) != BufferSize)
-	{
-		printf("Error has occurred sending buffer. \nError code: %d", WSAGetLastError());
-		return 3;
-	}
-
+	
+	if (send(ExSocket[Index], (char*)&BufferSize, sizeof(int), 0) == SOCKET_ERROR) return 2;
+	if (send(ExSocket[Index], Buffer, BufferSize, 0) != BufferSize) return 3;
 	return 0;
 }
 
 char* WNDSock::Recieve(unsigned int* Size)
 {
-	if(recv(Conn, (char*)Size, sizeof(Size), 0) == SOCKET_ERROR)
-	{
-		printf("%d", WSAGetLastError());
-		return NULL;
-	}
+	if(recv(Conn, (char*)Size, sizeof(Size), 0) == SOCKET_ERROR) return NULL;
 	
 	char* DataPtr = (char*)malloc(*Size);
 	if (!DataPtr) return NULL;
