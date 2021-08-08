@@ -17,7 +17,6 @@ class WNDSock
 	private:
 		//Socket Setup Information.
 		SOCKET Conn = NULL;
-		struct sockaddr_in Addr = { 0 };
 		
 		//Socket State Information.
 		unsigned char CurrentType = 0;
@@ -26,9 +25,9 @@ class WNDSock
 
 	public:
 
-		WNDSock(const char* Address, unsigned short Port);
+		WNDSock();
 		
-		unsigned char Host(unsigned int Backlog);
+		unsigned char Host(const char* Address, unsigned short Port, unsigned int Backlog);
 		
 		unsigned char Listen(unsigned int Backlog, unsigned char Count);
 
@@ -38,7 +37,7 @@ class WNDSock
 
 		unsigned char Send(char* Buffer, unsigned int BufferSize, unsigned char Index);
 
-		char* Recieve();
+		char* Recieve(unsigned int* Size);
 		
 		~WNDSock();
 
