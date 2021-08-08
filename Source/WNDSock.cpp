@@ -1,8 +1,7 @@
-#ifdef _WIN32
-#include "WNDSock.h"
-
 #ifndef WNDSockDefines
 #define WNDSockDefines
+
+#include "WNDSock.h"
 
 #define SOCK_HOST (unsigned char)1
 #define SOCK_CLIENT (unsigned char)2
@@ -12,6 +11,9 @@
 #define SD_BOTH (unsigned char)2
 
 #endif
+
+
+#ifdef _WIN32
 
 unsigned int OpenSockets = 0;
 WSAData Data = { 0 };
@@ -134,5 +136,13 @@ WNDSock::~WNDSock()
 
 
 #elif __unix__
+
+unsigned int OpenSockets = 0;
+
+WNDSOCK::WNDSock()
+{
+	
+	return;
+}
 
 #endif
