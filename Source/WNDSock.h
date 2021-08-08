@@ -1,8 +1,6 @@
 #ifdef _WIN32
 
-#include <Windows.h>
 #include <winsock.h>
-#include <iphlpapi.h>
 #pragma comment(lib, "Ws2_32.lib")
 
 #elif __unix__
@@ -14,6 +12,7 @@
 class WNDSock
 {
 private:
+#ifdef _WIN32
 	//Socket Setup Information.
 	SOCKET Conn = NULL;
 
@@ -21,6 +20,16 @@ private:
 	unsigned char CurrentType = 0;
 	unsigned char ExSocketCount = 0;
 	SOCKET* ExSocket = NULL;
+
+#elif __unix__
+	//Socket Setup Information.
+	unsigned int Conn = 0;
+
+	//Socket State Information.
+	unsigned char CurrentType = 0;
+	unsigned char ExSocketCount = 0;
+	unsigned int* ExSocket = NULL;
+#endif
 
 public:
 
@@ -39,5 +48,4 @@ public:
 	char* Recieve(unsigned int* Size);
 
 	~WNDSock();
-
 };
