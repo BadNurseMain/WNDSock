@@ -16,7 +16,7 @@
 unsigned int OpenSockets = 0;
 WSAData Data = { 0 };
 
-WNDSock::WNDSock(const char* Address, unsigned short Port)
+WNDSock::WNDSock()
 {
 	//Check Winsock has been initialized.
 	if (!OpenSockets) WSAStartup(MAKEWORD(2, 2), &Data);
@@ -25,16 +25,17 @@ WNDSock::WNDSock(const char* Address, unsigned short Port)
 	Conn = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 	if (Conn == INVALID_SOCKET) return;
 
-	//Preparing the information for the Socket.
-	Addr.sin_family = AF_INET;
-	Addr.sin_addr.S_un.S_addr = inet_addr(Address);
-	Addr.sin_port = Port;
 	++OpenSockets;
 	return;
 }
 
-unsigned char WNDSock::Host(unsigned int Backlog)
+unsigned char WNDSock::Host(const char* Address, unsigned short Port, unsigned int Backlog)
 {
+	struct sockaddr_in Addr = { 0 };
+	Addr.sin_addr.S_un.S_addr = inet_addr(Address);
+	Addr.sin_port = Port;
+	Addr.sin_family = AF_INET;
+
 	//Closing Socket if it was previously
 	//used for anything else.
 	if(CurrentType) closesocket(Conn);
@@ -95,7 +96,7 @@ unsigned char WNDSock::Join(const char* Address, unsigned short Port)
 	if (!ExSocket) return 1;
 
 	*ExSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-	while (connect(*ExSocket, (const sockaddr*)&HostAddr, sizeof(HostAddr)));
+	while (connect(Conn, (const sockaddr*)&HostAddr, sizeof(HostAddr)));
 
 	ExSocketCount = 1;
 	return 0;
@@ -114,7 +115,7 @@ unsigned char WNDSock::Send(char* Buffer, unsigned int BufferSize)
 		printf("Error has occurred sending buffer. \nError code: %d", WSAGetLastError());
 		return 2;
 	}
-
+	
 	return 0;
 }
 
@@ -136,20 +137,18 @@ unsigned char WNDSock::Send(char* Buffer, unsigned int BufferSize, unsigned char
 	return 0;
 }
 
-char* WNDSock::Recieve()
+char* WNDSock::Recieve(unsigned int* Size)
 {
-	unsigned int Size = 0;
-	if(recv(Conn, (char*)&Size, sizeof(Size), 0) == SOCKET_ERROR)
+	if(recv(Conn, (char*)Size, sizeof(Size), 0) == SOCKET_ERROR)
 	{
 		printf("%d", WSAGetLastError());
 		return NULL;
 	}
 	
-	char* DataPtr = (char*)malloc(Size);
+	char* DataPtr = (char*)malloc(*Size);
 	if (!DataPtr) return NULL;
 
-	if (recv(Conn, DataPtr, Size, 0) != Size) return NULL;
-	
+	if (recv(Conn, DataPtr, *Size, 0) != *Size) return NULL;
 	return DataPtr;
 }
 
@@ -162,6 +161,5 @@ WNDSock::~WNDSock()
 
 
 #elif __unix__
-
 
 #endif
