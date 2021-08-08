@@ -1,25 +1,11 @@
 #ifdef _WIN32
 
-#ifndef STD
-#define STD
-
-#include <stdlib.h>
-#include <stdio.h>
-#endif
-
 #include <Windows.h>
 #include <winsock.h>
 #include <iphlpapi.h>
 #pragma comment(lib, "Ws2_32.lib")
 
 #elif __unix__
-
-#ifndef STD
-#define STD
-
-#include <stdio.h>
-#include <stdlib.h>
-#endif
 
 #include <sys/socket.h>
 
