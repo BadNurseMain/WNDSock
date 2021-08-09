@@ -6,6 +6,8 @@
 #elif __unix__
 
 #include <sys/socket.h>
+#include <arpa/inet.h>
+#define NULL (void*)0
 
 #endif
 
@@ -28,14 +30,14 @@ private:
 	//Socket State Information.
 	unsigned char CurrentType = 0;
 	unsigned char ExSocketCount = 0;
-	unsigned int* ExSocket = NULL;
+	unsigned int* ExSocket = (unsigned int*)NULL;
 #endif
 
 public:
 
 	WNDSock();
 
-	unsigned char Host(const char* Address, unsigned short Port, unsigned int Backlog);
+	unsigned char Host(const char* Address, unsigned short Port);
 
 	unsigned char Listen(unsigned int Backlog, unsigned char Count);
 
