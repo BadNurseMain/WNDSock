@@ -2,6 +2,7 @@
 #define WNDSockDefines
 
 #include "WNDSock.h"
+#include <stdlib.h>
 
 #define SOCK_HOST (unsigned char)1
 #define SOCK_CLIENT (unsigned char)2
@@ -31,7 +32,7 @@ WNDSock::WNDSock()
 	return;
 }
 
-unsigned char WNDSock::Host(const char* Address, unsigned short Port, unsigned int Backlog)
+unsigned char WNDSock::Host(const char* Address, unsigned short Port)
 {
 	struct sockaddr_in Addr = { 0 };
 	Addr.sin_addr.S_un.S_addr = inet_addr(Address);
@@ -136,13 +137,57 @@ WNDSock::~WNDSock()
 
 
 #elif __unix__
+#define INVALID_SOCKET -1
 
 unsigned int OpenSockets = 0;
 
-WNDSOCK::WNDSock()
+WNDSock::WNDSock()
 {
-	
+	Conn = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+	if(Conn == -1) Conn = 0;
 	return;
 }
+
+unsigned char WNDSock::Host(const char* Address, unsigned short Port)
+{
+	struct sockaddr_in Addr = {0};
+	Addr.sin_addr.s_addr = inet_addr(Address);
+	Addr.sin_port = Port;
+	Addr.sin_family = AF_INET;
+
+	CurrentType = SOCK_HOST;
+
+	return bind(Conn, (const sockaddr*)&Addr, sizeof(Addr));
+}
+
+unsigned char WNDSock::Listen(unsigned int Backlog, unsigned char Count)
+{
+	listen(Conn, Backlog);
+
+	ExSocket = (unsigned int*)malloc(sizeof(int) * Count);
+	if(!ExSocket) return 1;
+
+	ExSocketCount = Count;
+	
+	for(unsigned char x = 0; x < Count; x++)
+	{
+		ExSocket[x] = accept4(Conn, NULL, NULL, 0);
+		if(ExSocket[x] == INVALID_SOCKET) return 2;
+	}
+	return 0;
+}
+
+unsigned char WNDSock::Join(const char* Address, unsigned short Port)
+{
+	struct sockaddr_in Addr = {0};
+	Addr.sin_addr.s_addr = inet_addr(Address);
+	Addr.sin_port = Port;
+	Addr.sin_family = AF_INET;
+
+	CurrentType = SOCK_CLIENT;
+
+	return connect(Conn, (const sockaddr*)&Addr, sizeof(Addr));
+}
+
 
 #endif
