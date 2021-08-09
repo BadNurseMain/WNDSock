@@ -27,7 +27,7 @@ int main()
         unsigned int Size = 0;
         char* Buff2 = y.Recieve(&Size);
 
-        printf("%s", Buff);
+        printf("%s", Buff2);
         free(Buff2);
     }
 
