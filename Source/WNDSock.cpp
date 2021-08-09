@@ -138,9 +138,10 @@ WNDSock::~WNDSock()
 
 #elif __unix__
 #define INVALID_SOCKET -1
+#include <unistd.h>
 
 unsigned int OpenSockets = 0;
-#include <stdio.h>
+
 
 WNDSock::WNDSock()
 {
@@ -193,6 +194,7 @@ unsigned char WNDSock::Join(const char* Address, unsigned short Port)
 
 WNDSock::~WNDSock()
 {
+	close(Conn);
 	return;
 }
 
