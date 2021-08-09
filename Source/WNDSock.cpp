@@ -140,6 +140,7 @@ WNDSock::~WNDSock()
 #define INVALID_SOCKET -1
 
 unsigned int OpenSockets = 0;
+#include <stdio.h>
 
 WNDSock::WNDSock()
 {
@@ -174,6 +175,7 @@ unsigned char WNDSock::Listen(unsigned int Backlog, unsigned char Count)
 		ExSocket[x] = accept4(Conn, NULL, NULL, 0);
 		if(ExSocket[x] == INVALID_SOCKET) return 2;
 	}
+
 	return 0;
 }
 
@@ -189,5 +191,9 @@ unsigned char WNDSock::Join(const char* Address, unsigned short Port)
 	return connect(Conn, (const sockaddr*)&Addr, sizeof(Addr));
 }
 
+WNDSock::~WNDSock()
+{
+	return;
+}
 
 #endif
