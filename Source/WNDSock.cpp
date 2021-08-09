@@ -192,6 +192,31 @@ unsigned char WNDSock::Join(const char* Address, unsigned short Port)
 	return connect(Conn, (const sockaddr*)&Addr, sizeof(Addr));
 }
 
+unsigned char WNDSock::Send(char* Buffer, unsigned int BufferSize)
+{
+	if(send(*ExSocket, (const void*)&BufferSize, sizeof(BufferSize), 0) == INVALID_SOCKET) return 1;
+	if(send(*ExSocket, (const void*)Buffer, BufferSize, 0) == INVALID_SOCKET) return 2;
+	return 0;
+}
+
+unsigned char WNDSock::Send(char* Buffer, unsigned int BufferSize, unsigned char Index)
+{
+	if(send(ExSocket[Index], (const void*)&BufferSize, sizeof(BufferSize), 0) == INVALID_SOCKET) return 1;
+	if(send(ExSocket[Index], (const void*)Buffer, BufferSize, 0) == INVALID_SOCKET) return 2;
+	return 0;
+}
+
+char* WNDSock::Recieve(unsigned int* Size)
+{
+	if(recv(Conn, (void*)Size, sizeof(*Size), 0) == INVALID_SOCKET) return NULL;
+
+	char* Buff = (char*)malloc(*Size);
+	if(!Buff) return NULL;
+
+	if(recv(Conn, (void*)Buff, *Size, 0) == INVALID_SOCKET) return NULL;
+	return Buff;
+}
+
 WNDSock::~WNDSock()
 {
 	close(Conn);
