@@ -1,5 +1,4 @@
 #ifdef _WIN32
-
 #include <winsock.h>
 #pragma comment(lib, "Ws2_32.lib")
 
@@ -37,4 +36,6 @@ typedef unsigned int WNDSOCK;
 WNDSOCK createSocket();
 WNDSOCK* hostSocket(WNDSOCK Socket, const char* IP, unsigned short Port, unsigned char ClientCount);
 unsigned char joinSocket(WNDSOCK Socket, const char* IP, unsigned short Port);
+unsigned char sendData(WNDSOCK Socket, const char* Data, unsigned int Size);
+char* recieveData(WNDSOCK Socket, unsigned int* Size);
 void closeSocket(WNDSOCK Socket);
