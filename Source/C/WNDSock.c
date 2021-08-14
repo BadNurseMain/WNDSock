@@ -1,7 +1,6 @@
 #include "WNDSock.h"
 
 #ifdef _WIN32
-
 unsigned char TOTALSOCKCOUNT = 0;
 WSADATA SOCKDATA = { 0 };
 
@@ -58,6 +57,24 @@ unsigned char joinSocket(WNDSOCK Socket, const char* IP, unsigned short Port)
 	if(connect(Socket, (const struct sockaddr*)&addr, sizeof(addr))) WND_ERROR;
 
 	return 0;
+}
+
+unsigned char sendData(WNDSOCK Socket, const char* Data, unsigned int Size)
+{
+	if(send(Socket, (const char*)&Size, sizeof(Size), 0) != sizeof(Size)) return WND_ERROR;
+	if(send(Socket, Data, Size, 0) != Size) return WND_ERROR;
+	return 0;
+}
+
+char* recieveData(WNDSOCK Socket, unsigned int* Size)
+{
+	if(recv(Socket, &Size, sizeof(*Size), 0) != sizeof(*Size)) return WND_ERROR;
+
+	char* Ptr = malloc(*Size);
+	if (!Ptr) return WND_ERROR;
+
+	if (recv(Socket, Ptr, *Size, 0) != *Size) return WND_ERROR;
+	return Ptr;
 }
 
 void closeSocket(WNDSOCK Socket)
