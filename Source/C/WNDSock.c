@@ -1,15 +1,25 @@
 #include "WNDSock.h"
 
 #ifdef _WIN32
+
+//Definitions.
+#pragma comment(lib, "Ws2_32.lib")
+
+#define WND_IPV4 AF_INET
+#define WND_STREAM SOCK_STREAM
+#define WND_TCP IPPROTO_TCP
+#define WNDSOCK_INVAL INVALID_SOCKET
+
+#define WND_STRTOIP(IP) inet_addr(IP);
+
+//Variables Required for WSA.
 unsigned char TOTALSOCKCOUNT = 0;
 WSADATA SOCKDATA = { 0 };
 
+//Windows Functions for Sockets.
 WNDSOCK createSocket()
 {
-	if(!TOTALSOCKCOUNT)
-	{
-		WSAStartup(MAKEWORD(2, 2), &SOCKDATA);
-	}
+	if(!TOTALSOCKCOUNT) WSAStartup(MAKEWORD(2, 2), &SOCKDATA);
 
 	WNDSOCK Conn = socket(WND_IPV4, WND_STREAM, WND_TCP);
 	if (Conn == WNDSOCK_INVAL) return 1;
@@ -25,13 +35,13 @@ WNDSOCK* hostSocket(WNDSOCK Socket, const char* IP, unsigned short Port, unsigne
 	Addr.sin_port = Port;
 	Addr.sin_family = WND_IPV4;
 	
-	if(bind(Socket, (const struct sockaddr*)&Addr, sizeof(Addr))) return WND_ERROR;
+	if(bind(Socket, (const struct sockaddr*)&Addr, sizeof(Addr))) return NULL;
 	listen(Socket, (int)~0);
 
-	if (!ClientCount) return WND_ERROR;
+	if (!ClientCount) return NULL;
 
 	WNDSOCK* Ptr = malloc(sizeof(WNDSOCK) * ClientCount);
-	if (!Ptr) return WND_ERROR;
+	if (!Ptr) return NULL;
 
 	for (unsigned char x = 0; x < ClientCount; x++)
 	{
@@ -68,12 +78,12 @@ unsigned char sendData(WNDSOCK Socket, const char* Data, unsigned int Size)
 
 char* recieveData(WNDSOCK Socket, unsigned int* Size)
 {
-	if(recv(Socket, &Size, sizeof(*Size), 0) != sizeof(*Size)) return WND_ERROR;
+	if(recv(Socket, (char*)&Size, sizeof(*Size), 0) != sizeof(*Size)) return NULL;
 
 	char* Ptr = malloc(*Size);
-	if (!Ptr) return WND_ERROR;
+	if (!Ptr) return NULL;
 
-	if (recv(Socket, Ptr, *Size, 0) != *Size) return WND_ERROR;
+	if (recv(Socket, Ptr, *Size, 0) != *Size) return NULL;
 	return Ptr;
 }
 
