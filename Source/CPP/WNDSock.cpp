@@ -1,7 +1,7 @@
 #ifndef WNDSockDefines
 #define WNDSockDefines
 
-#include "WNDSock.h"
+#include "WNDSock.hpp"
 #include <stdlib.h>
 
 #define SOCK_HOST (unsigned char)1
