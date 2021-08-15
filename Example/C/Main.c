@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include "WNDSock.h"
 
-//Works for Windows as of right now.
+//Works for both Windows and Linux :)
 int main()
 {
 	int Res = 0;
