@@ -154,17 +154,9 @@ unsigned char sendData(WNDSOCK Socket, const char* Data, unsigned int Size)
 
 char* recieveData(WNDSOCK Socket, unsigned int* Size)
 {
-	if(!Size)
-	{
-		printf("No size specified.\n");
-		return NULL;
-	}
+	if(!Size) return NULL;
 
-	if (recv(Socket, (char*)Size, sizeof(*Size), 0) != sizeof(*Size))
-	{
-		printf("Getting size failed.\n");
-		return NULL;
-	}
+	if (recv(Socket, (char*)Size, sizeof(*Size), 0) != sizeof(*Size)) return NULL;
 
 	unsigned char Confirmation = WND_CONFIRM;
 
@@ -173,11 +165,7 @@ char* recieveData(WNDSOCK Socket, unsigned int* Size)
 	char* Ptr = malloc(*Size);
 	if (!Ptr) return NULL;
 
-	if (recv(Socket, Ptr, *Size, 0) != *Size)
-	{
-		printf("Getting Buffer failed.\n");
-		return NULL;
-	}
+	if (recv(Socket, Ptr, *Size, 0) != *Size) return NULL;
 
 	if (!send(Socket, &Confirmation, 1, 0)) return NULL;
 
