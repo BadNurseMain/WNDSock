@@ -8,33 +8,50 @@ int main()
 	int Res = 0;
 	scanf_s("%d", &Res);
 
-	if(Res == 1)
+	if (Res == 1)
 	{
 		WNDSOCK x = createSocket();
-		WNDSOCK* Clients = hostSocket(x, "192.168.1.1", 7209, 1);
-		
-		if (!Clients) return 1;
+		WNDSOCK* Clients = hostSocket(x, "192.168.1.23", 7209, 1);
+
+		if (!Clients)
+		{
+			printf("No Clients Found.\n");
+			return 1;
+		}
 
 		const char* Buffer = "HowdyGamer\0";
-		
-		if(sendData(Clients[0], Buffer, strlen(Buffer) + 1) == WND_ERROR) return 2;
-		
+
+		if (sendData(Clients[0], Buffer, strlen(Buffer) + 1) == WND_ERROR)
+		{
+			printf("Error Sending Data.\n");
+			return 2;
+		}
+
 		free(Clients);
 		closeSocket(x);
-	} else 
+	}
+	else
 	{
 		WNDSOCK x = createSocket();
-		
-		if (joinSocket(x, "192.168.1.1", 7209)) return 1;
-		
-		unsigned int Total Size = 0;
-		char* Buffer = receieveData(x, &TotalSize);
-		
-		if(!Buffer) return 2;
-		
+
+		if (joinSocket(x, "192.168.1.23", 7209))
+		{
+			printf("Could not connect to Socket.\n");
+			return 1;
+		}
+
+		unsigned int TotalSize = 0;
+		char* Buffer = recieveData(x, &TotalSize);
+
+		if (!Buffer)
+		{
+			printf("Could not receive data.\n");
+			return 2;
+		}
+
 		printf("%s \n", Buffer);
 		closeSocket(x);
 	}
-	
+
 	return 0;
 }
