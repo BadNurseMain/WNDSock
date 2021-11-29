@@ -10,6 +10,9 @@ typedef struct sockaddr_in WNDSOCKADDR;
 
 #define WND_ERROR (unsigned char)1
 
+#define WND_CONFIRM (unsigned char)2
+
+
 #elif __unix__
 #include <unistd.h>
 #include <sys/socket.h>
